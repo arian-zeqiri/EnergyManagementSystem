@@ -1,0 +1,141 @@
+<mvc:View 
+    controllerName="userform.controller.UserForm"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:layout="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    displayBlock="true">
+
+    <Page id="userFormPage" 
+          title="Solar Configuratie"
+          showHeader="true"
+          backgroundDesign="Solid"
+          busy="{viewState>/isBusy}"
+          busyIndicatorDelay="0">
+        
+        <content>
+            <f:SimpleForm
+                id="mainForm"
+                editable="true"
+                layout="ResponsiveGridLayout"
+                labelSpanL="3"
+                labelSpanM="3"
+                emptySpanL="1"
+                emptySpanM="1"
+                columnsL="1"
+                columnsM="1"
+                ariaLabelledBy="formTitle">
+
+                <!-- Personal Information Section -->
+                <Title id="personalInfoTitle" text="Persoonlijke Gegevens">
+                    <layoutData>
+                        <layout:GridData span="L12 M12 S12" />
+                    </layoutData>
+                </Title>
+                
+                <Label id="emailLabel" text="Email" labelFor="emailInput"/>
+                <Input id="emailInput" value="{userProfile>/Email}" editable="false" width="100%"/>
+                
+                <Label id="firstNameLabel" text="Voornaam" required="true" labelFor="firstNameInput"/>
+                <Input id="firstNameInput" value="{userProfile>/Firstname}" width="100%" placeholder="Vul uw voornaam in"/>
+
+                <Label id="lastNameLabel" text="Achternaam" required="true" labelFor="lastNameInput"/>
+                <Input id="lastNameInput" value="{userProfile>/Lastname}" width="100%" placeholder="Vul uw achternaam in"/>
+
+                <!-- Contract Details Section -->
+                <Title id="contractTitle" text="Contract Details">
+                    <layoutData>
+                        <layout:GridData span="L12 M12 S12" />
+                    </layoutData>
+                </Title>
+                
+                <Label id="contractTypeLabel" text="Contract Type" labelFor="contractTypeGroup"/>
+                    <RadioButtonGroup 
+                        id="contractTypeGroup"
+                        selectedKey="{userProfile>/ContractType}"
+                        select=".onContractTypeChange"
+                        columns="2">
+                        <RadioButton id="fixedContractRadio" key="fixed" text="Fixed"/>
+                        <RadioButton id="variableContractRadio" key="variable" text="Variable"/>
+                    </RadioButtonGroup>
+
+                <Label id="energyPriceLabel" text="Vaste energieprijs (€/kWh)" required="true"
+                    visible="{= ${userProfile>/ContractType} === 'fixed'}" 
+                    labelFor="energyPriceInput"/>
+
+                <Input id="energyPriceInput"
+                    value="{/FixedEnergyPrice}"
+                    visible="{= ${userProfile>/ContractType} === 'fixed'}"
+                    placeholder="Bijv. 0.2250"
+                    width="200px"/>
+
+                
+                <!-- Solar Panel Settings Section -->
+                <Title id="solarSettingsTitle" text="Zonnepaneel Instellingen">
+                    <layoutData>
+                        <layout:GridData span="L12 M12 S12" />
+                    </layoutData>
+                </Title>
+
+                <Label id="panelsAmountLabel" text="Aantal panelen" required="true" labelFor="panelsAmountInput"/>
+                <StepInput id="panelsAmountInput" value="{/PanelsAmount}" min="1" max="50" width="200px"/>
+
+                <Label id="modulePowerLabel" text="Vermogen per module (W)" required="true" labelFor="modulePowerInput"/>
+                <StepInput id="modulePowerInput" value="{/ModulesPower}" min="100" max="600" step="50" width="200px"/>
+
+                <Label id="panelAngleLabel" text="Paneelhoek (°)" required="true" labelFor="panelAngleInput"/>
+                <StepInput id="panelAngleInput" value="{/PanelAngle}" min="0" max="90" width="200px"/>
+
+                <Label id="azimuthLabel" text="Azimut (° t.o.v. zuiden)" required="true" labelFor="azimuthInput"/>
+                <StepInput id="azimuthInput" value="{/PanelAzimuth}" min="0" max="360" width="200px"/>
+
+                <!-- Installation Address Section -->
+                <Title id="addressTitle" text="Installatie Adres">
+                    <layoutData>
+                        <layout:GridData span="L12 M12 S12" />
+                    </layoutData>
+                </Title>
+                
+                <Label id="addressLabel" text="Adres" required="true" labelFor="addressInput"/>
+                <Input id="addressInput"
+                       value="{address>/selectedAddress/displayName}"
+                       showSuggestion="true"
+                       suggest=".onSuggestAddress"
+                       suggestionItems="{path: 'address>/suggestions'}"
+                       suggestionItemSelected=".onAddressSelected"
+                       required="true"
+                       liveChange=".onSuggestAddress"
+                       placeholder="Zoek uw installatie adres">
+                    <suggestionItems>
+                        <SuggestionItem text="{address>description}" />
+                    </suggestionItems>
+                </Input>
+
+                <Label id="latitudeLabel" text="Latitude" labelFor="latitudeInput"/>
+                <Input id="latitudeInput" value="{address>/selectedAddress/latitude}" editable="false" width="100%"/>
+
+                <Label id="longitudeLabel" text="Longitude" labelFor="longitudeInput"/>
+                <Input id="longitudeInput" value="{address>/selectedAddress/longitude}" editable="false" width="100%"/>
+
+                <!-- Form Actions -->
+                <Toolbar id="formToolbar">
+                    <ToolbarSpacer/>
+                    <Button id="saveButton" 
+                            text="{= ${viewState>/formMode} === 'update' ? 'Bijwerken' : 'Opslaan' }" 
+                            type="Emphasized" 
+                            press=".onSavePress" 
+                            width="120px"/>
+                </Toolbar>
+            </f:SimpleForm>
+        </content>
+        
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Text text="{= ${viewState>/formMode} === 'update' ? 'Laatst bijgewerkt: ' + ${/ModifiedAt} : 'Nieuwe configuratie' }" 
+                      visible="{viewState>/dataLoaded}"/>
+            </Toolbar>
+        </footer>
+    </Page>
+</mvc:View>

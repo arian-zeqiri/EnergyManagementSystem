@@ -6,10 +6,14 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
+    "@cap-js/hana": "^1",
     "@sap/cds": "^8",
-    "express": "^4",
+    "@sap/cds-hana": "^2.0.0",
+    "@sap/cds-odata-v2-adapter-proxy": "^1.9.7",
+    "@sap/hdi-deploy": "^5.4.2",
     "@sap/xssec": "^4",
-    "@cap-js/hana": "^1"
+    "express": "^4",
+    "hdb": "^0.19.12"
   },
   "devDependencies": {
     "@cap-js/cds-types": "^0.9.0",
@@ -17,7 +21,8 @@
     "@sap/cds-dk": "^8"
   },
   "scripts": {
-    "start": "cds-serve"
+    "start": "cds-serve",
+    "watch-userform": "cds watch --open userform/webapp/index.html?sap-ui-xx-viewCache=false"
   },
   "cds": {
     "requires": {
