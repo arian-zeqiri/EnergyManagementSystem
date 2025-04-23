@@ -22,7 +22,8 @@
   },
   "scripts": {
     "start": "cds-serve",
-    "watch-userform": "cds watch --open userform/webapp/index.html?sap-ui-xx-viewCache=false"
+    "watch-userform": "cds watch --open userform/webapp/index.html?sap-ui-xx-viewCache=false",
+    "watch-adminpage": "cds watch --open adminpage/webapp/index.html?sap-ui-xx-viewCache=false"
   },
   "cds": {
     "requires": {
@@ -31,5 +32,8 @@
     "sql": {
       "native_hana_associations": false
     }
-  }
+  },
+  "sapux": [
+    "app/adminpage"
+  ]
 }
