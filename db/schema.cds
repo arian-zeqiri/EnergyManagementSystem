@@ -28,10 +28,10 @@ entity Users : cuid, managed {
 }
 
 entity EnergyRates {
-    key ID    : Integer @cds.autoIncrement; // Use autoIncrement instead of generated
+    key ID    : UUID @odata.Auto; // Change to UUID
         Date  : Date;
         Time  : Time;
-        Price : Decimal(5, 2);
+        Price : Decimal(6, 4);
         User  : Association to Users;
 }
 

@@ -51,25 +51,36 @@
                 </Title>
                 
                 <Label id="contractTypeLabel" text="Contract Type" labelFor="contractTypeGroup"/>
-                    <RadioButtonGroup 
-                        id="contractTypeGroup"
-                        selectedKey="{userProfile>/ContractType}"
-                        select=".onContractTypeChange"
-                        columns="2">
-                        <RadioButton id="fixedContractRadio" key="fixed" text="Fixed"/>
-                        <RadioButton id="variableContractRadio" key="variable" text="Variable"/>
-                    </RadioButtonGroup>
+                <RadioButtonGroup 
+                    id="contractTypeGroup"
+                    selectedKey="{path: 'userProfile>/ContractType', mode: 'TwoWay'}"
+                    select=".onContractTypeChange"
+                    columns="2">
+                    <RadioButton id="fixedContractRadio" key="fixed" text="Fixed"/>
+                    <RadioButton id="variableContractRadio" key="variable" text="Variable"/>
+                </RadioButtonGroup>
 
                 <Label id="energyPriceLabel" text="Vaste energieprijs (€/kWh)" required="true"
                     visible="{= ${userProfile>/ContractType} === 'fixed'}" 
                     labelFor="energyPriceInput"/>
 
                 <Input id="energyPriceInput"
-                    value="{/FixedEnergyPrice}"
+                    value="{= ${energyRate>/Price} > 0 ? ${energyRate>/Price} : '' }"
                     visible="{= ${userProfile>/ContractType} === 'fixed'}"
                     placeholder="Bijv. 0.2250"
+                    type="Number"
+                    min="0.0001"
+                    max="1.0000"
+                    displayFormat="0.0000"
+                    valueFormat="0.0000"
                     width="200px"/>
 
+                <Label id="lastUpdatedLabel" text="Laatst bijgewerkt" 
+                    visible="{= ${userProfile>/ContractType} === 'fixed' &amp;&amp; ${energyRate>/Date} !== null}" 
+                    labelFor="lastUpdatedText"/>
+                <Text id="lastUpdatedText" 
+                    text="{= ${energyRate>/Date} ? ${energyRate>/Date} + ' ' + ${energyRate>/Time} : '' }"
+                    visible="{= ${userProfile>/ContractType} === 'fixed' &amp;&amp; ${energyRate>/Date} !== null}"/>
                 
                 <!-- Solar Panel Settings Section -->
                 <Title id="solarSettingsTitle" text="Zonnepaneel Instellingen">

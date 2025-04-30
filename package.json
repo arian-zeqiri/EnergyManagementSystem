@@ -13,7 +13,8 @@
     "@sap/hdi-deploy": "^5.4.2",
     "@sap/xssec": "^4",
     "express": "^4",
-    "hdb": "^0.19.12"
+    "hdb": "^0.19.12",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@cap-js/cds-types": "^0.9.0",

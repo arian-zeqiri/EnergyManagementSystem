@@ -20,9 +20,24 @@ sap.ui.define([
                 Email: "",
                 Firstname: "",
                 Lastname: "",
-                ContractType: "variable" // Default value
+                ContractType: "variable", // Default value
+                EnergyRate: null
             });
             this.getView().setModel(oUserModel, "userProfile");
+            
+            // Energy rate model
+            const oEnergyRateModel = new JSONModel({
+                ID: null,
+                Date: null,
+                Time: null,
+                Price: 0.00
+            });
+            this.getView().setModel(oEnergyRateModel, "energyRate");
+            
+            // Initialize UI based on default contract type
+            // We'll call this again after data is loaded
+            const view = this.getView();
+            view.attachEventOnce("afterRendering", this._updateContractTypeUI, this);
 
             // Solar config model
             const oConfigModel = new JSONModel({
@@ -58,12 +73,17 @@ sap.ui.define([
             const viewState = this.getView().getModel("viewState");
             viewState.setProperty("/isBusy", true);
 
-            // Load user profile data
+            // Load user profile data and then other data
             this._fetchUserProfile()
+                .then(() => this._fetchEnergyRate())
                 .then(() => this._fetchSolarConfig())
                 .then(() => {
                     viewState.setProperty("/dataLoaded", true);
                     viewState.setProperty("/isBusy", false);
+                    
+                    // Update the UI based on loaded contract type
+                    this._updateContractTypeUI();
+                    
                     BusyIndicator.hide();
                 })
                 .catch(error => {
@@ -95,6 +115,42 @@ sap.ui.define([
                         resolve();
                     },
                     error: (error) => reject(error)
+                });
+            });
+        },
+
+        _fetchEnergyRate: function () {
+            return new Promise((resolve, reject) => {
+                // Only fetch energy rate if contract type is "fixed"
+                const contractType = this.getView().getModel("userProfile").getProperty("/ContractType");
+                
+                if (contractType !== "fixed") {
+                    resolve();
+                    return;
+                }
+                
+                // Call the getuserEnergyRate function - note the lowercase 'u' in 'user'
+                $.ajax({
+                    url: "/userform/getuserEnergyRate()",
+                    type: "GET",
+                    success: (data) => {
+                        if (data) {
+                            // Update energy rate model with retrieved data
+                            const oEnergyRateModel = this.getView().getModel("energyRate");
+                            oEnergyRateModel.setData(data);
+                            
+                            // Also update the energy price input field
+                            const oEnergyPriceInput = this.byId("energyPriceInput");
+                            if (oEnergyPriceInput) {
+                                oEnergyPriceInput.setValue(data.Price);
+                            }
+                        }
+                        resolve();
+                    },
+                    error: (error) => {
+                        console.warn("Error fetching energy rate, but continuing:", error);
+                        resolve(); // Resolve anyway to continue the chain
+                    }
                 });
             });
         },
@@ -231,8 +287,41 @@ sap.ui.define([
 
             BusyIndicator.show();
 
-            // First update user profile and then solar config (if user profile succeeds)
+            // First update user profile
             this._updateUserProfile()
+                .then(() => {
+                    // Check if we need to update energy rate (fixed contract)
+                    const userProfile = this.getView().getModel("userProfile").getData();
+                    
+                    if (userProfile.ContractType === "fixed") {
+                        // Get the energy price from the input field
+                        const energyPrice = parseFloat(this.byId("energyPriceInput").getValue());
+                        
+                        if (isNaN(energyPrice) || energyPrice <= 0 || energyPrice > 1) {
+                            MessageToast.show("Voer een geldige energieprijs in (tussen 0 en 1)");
+                            BusyIndicator.hide();
+                            return Promise.reject(new Error("Invalid energy price"));
+                        }
+                        
+                        // Add a slight delay before updating energy rate
+                        return new Promise(resolve => {
+                            setTimeout(() => {
+                                this._updateEnergyRate(energyPrice)
+                                    .then(data => {
+                                        console.log("Energy rate updated:", data);
+                                        resolve();
+                                    })
+                                    .catch(error => {
+                                        console.error("Error updating energy rate:", error);
+                                        MessageBox.error("Fout bij opslaan energieprijs: " + error.message);
+                                        resolve(); // Still resolve to continue with solar config
+                                    });
+                            }, 100);
+                        });
+                    }
+                    
+                    return Promise.resolve();
+                })
                 .then(() => {
                     // Return early if we don't need to update solar config
                     if (!this._validateSolarConfigData()) {
@@ -260,6 +349,8 @@ sap.ui.define([
                 .then(result => {
                     if (result) {
                         MessageToast.show("Configuratie succesvol opgeslagen");
+                    } else {
+                        MessageToast.show("Gegevens succesvol opgeslagen");
                     }
                     BusyIndicator.hide();
                 })
@@ -335,6 +426,58 @@ sap.ui.define([
                     },
                     error: (xhr) => {
                         console.error("Failed to fetch CSRF token:", xhr.responseText);
+                        reject(new Error("Kon beveiligingstoken niet ophalen"));
+                    }
+                });
+            });
+        },
+
+        _updateEnergyRate: function (price) {
+    return new Promise((resolve, reject) => {
+        // Prijs afronden voor consistentie
+        const roundedPrice = parseFloat(parseFloat(price).toFixed(4));
+        
+        // Alleen Price meesturen
+        const payload = {
+            Price: roundedPrice
+        };
+        
+        console.log("Updating energy rate with price:", roundedPrice);
+
+                // Get CSRF token
+                $.ajax({
+                    url: "/userform",
+                    type: "GET",
+                    headers: {
+                        "X-CSRF-Token": "Fetch"
+                    },
+                    success: (data, textStatus, jqXHR) => {
+                        const csrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
+
+                        // Call the updateUserEnergyRate action
+                        $.ajax({
+                            url: "/userform/updateUserEnergyRate",
+                            type: "POST",
+                            contentType: "application/json",
+                            headers: {
+                                "X-CSRF-Token": csrfToken
+                            },
+                            data: JSON.stringify(payload),
+                            success: (data) => {
+                                if (data) {
+                                    // Update the energy rate model
+                                    this.getView().getModel("energyRate").setData(data);
+                                }
+                                resolve(data);
+                            },
+                            error: (xhr) => {
+                                console.error("Error updating energy rate:", xhr.responseText);
+                                reject(new Error(this._getErrorMessage(xhr)));
+                            }
+                        });
+                    },
+                    error: (xhr) => {
+                        console.error("Failed to fetch CSRF token for energy rate:", xhr.responseText);
                         reject(new Error("Kon beveiligingstoken niet ophalen"));
                     }
                 });
@@ -419,7 +562,37 @@ sap.ui.define([
                 });
             });
         },
-        // Add this new method to your controller:
+
+        _updateContractTypeUI: function() {
+            const sContractType = this.getView().getModel("userProfile").getProperty("/ContractType");
+            
+            // Update UI based on contract type
+            if (sContractType === "fixed") {
+                // If fixed is selected, show the energy price field
+                this.byId("energyPriceLabel").setVisible(true);
+                this.byId("energyPriceInput").setVisible(true);
+                
+                // Also fetch the energy rate if not already loaded
+                const oEnergyRateModel = this.getView().getModel("energyRate");
+                if (!oEnergyRateModel.getProperty("/ID")) {
+                    this._fetchEnergyRate();
+                }
+            } else {
+                // If variable is selected, hide the energy price field
+                this.byId("energyPriceLabel").setVisible(false);
+                this.byId("energyPriceInput").setVisible(false);
+            }
+            
+            // Also update the RadioButtonGroup if needed
+            const oRadioButtonGroup = this.byId("contractTypeGroup");
+            if (oRadioButtonGroup) {
+                // For RadioButtonGroup, we need to set the selectedIndex instead of selectedKey
+                const selectedIndex = sContractType === "fixed" ? 0 : 1;
+                oRadioButtonGroup.setSelectedIndex(selectedIndex);
+            }
+            
+            console.log("Contract type UI updated based on:", sContractType);
+        },
 
         onContractTypeChange: function (oEvent) {
             // Get the selected contract type from the radio button group
@@ -431,16 +604,8 @@ sap.ui.define([
             // Log the change for debugging
             console.log("Contract type changed to:", sSelectedKey);
 
-            // Update UI based on contract type
-            if (sSelectedKey === "fixed") {
-                // If fixed is selected, show the energy price field
-                this.byId("energyPriceLabel").setVisible(true);
-                this.byId("energyPriceInput").setVisible(true);
-            } else {
-                // If variable is selected, hide the energy price field
-                this.byId("energyPriceLabel").setVisible(false);
-                this.byId("energyPriceInput").setVisible(false);
-            }
+            // Update UI based on contract type using the helper method
+            this._updateContractTypeUI();
         },
 
         _getErrorMessage: function (xhr) {
@@ -486,9 +651,10 @@ sap.ui.define([
 
             // Validate fixed price if contract type is fixed
             if (userProfile.ContractType === "fixed") {
-                const fixedPrice = this.getView().getModel().getProperty("/FixedEnergyPrice");
-                if (!fixedPrice || isNaN(fixedPrice) || parseFloat(fixedPrice) <= 0) {
-                    setInputState("energyPriceInput", "Error", "Voer een geldige prijs in");
+                const fixedPrice = this.byId("energyPriceInput").getValue();
+                const priceValue = parseFloat(fixedPrice);
+                if (!fixedPrice || isNaN(priceValue) || priceValue <= 0 || priceValue > 1) {
+                    setInputState("energyPriceInput", "Error", "Voer een geldige prijs in (tussen 0 en 1)");
                     isValid = false;
                 } else {
                     setInputState("energyPriceInput", "None");

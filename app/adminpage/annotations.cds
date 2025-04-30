@@ -1,34 +1,37 @@
 using AdminService as service from '../../srv/admin-service';
 
 annotate service.SolarPanelConfigurations with @(
-    UI.HeaderInfo: {
-        TypeName: 'Solar Panel Configuration',
+    UI.HeaderInfo                : {
+        TypeName      : 'Solar Panel Configuration',
         TypeNamePlural: 'Solar Panel Configurations',
-        Title: {
+        Title         : {
             $Type: 'UI.DataField',
             Value: UserFirstname,
 
         },
-        Description: {
+        Description   : {
             $Type: 'UI.DataField',
             Value: Location,
         }
     },
-    
+
     // Add HeaderFacets to show key information at the top
-    UI.HeaderFacets: [
-        {
-            $Type: 'UI.ReferenceFacet',
-            ID: 'UserInfoFacet',
-            Label: 'User Information',
-            Target: '@UI.FieldGroup#UserInfo'
-        }
-    ],
-    
+    UI.HeaderFacets              : [{
+        $Type : 'UI.ReferenceFacet',
+        ID    : 'UserInfoFacet',
+        Label : 'User Details',
+        Target: '@UI.FieldGroup#UserInfo'
+    }],
+
     // User information field group
-    UI.FieldGroup #UserInfo: {
+    UI.FieldGroup #UserInfo      : {
         $Type: 'UI.FieldGroupType',
-        Data: [
+        Data : [
+            {
+                $Type: 'UI.DataField',
+                Label: 'ID',
+                Value: User_ID
+            },
             {
                 $Type: 'UI.DataField',
                 Label: 'Email',
@@ -54,7 +57,7 @@ annotate service.SolarPanelConfigurations with @(
 
     UI.FieldGroup #GeneratedGroup: {
         $Type: 'UI.FieldGroupType',
-        Data: [
+        Data : [
             {
                 $Type: 'UI.DataField',
                 Label: 'Location',
@@ -92,42 +95,47 @@ annotate service.SolarPanelConfigurations with @(
             },
             {
                 $Type: 'UI.DataField',
-                Label: 'Total Power (W)',
-                Value: TotalPower,
+                Label: 'Module Power (W)',
+                Value: ModulePower,
             }
         ],
     },
-    
-    UI.Facets: [
+
+    UI.Facets                    : [
         {
-            $Type: 'UI.ReferenceFacet',
-            ID: 'UserDetailsFacet',
-            Label: 'User Details',
+            $Type : 'UI.ReferenceFacet',
+            ID    : 'UserDetailsFacet',
+            Label : 'User Details',
             Target: '@UI.FieldGroup#UserInfo',
         },
         {
-            $Type: 'UI.ReferenceFacet',
-            ID: 'ConfigDetailsFacet',
-            Label: 'Configuration Details',
+            $Type : 'UI.ReferenceFacet',
+            ID    : 'ConfigDetailsFacet',
+            Label : 'Configuration Details',
             Target: '@UI.FieldGroup#GeneratedGroup',
         }
     ],
-    
-    UI.LineItem: [
+
+    UI.LineItem                  : [
         {
             $Type: 'UI.DataField',
-            Label: 'User Email',
-            Value: User_Email,
+            Label: 'User ID',
+            Value: User_ID,
         },
         {
             $Type: 'UI.DataField',
-            Label: 'Panel Amount',
-            Value: PanelAmount,
+            Label: 'User Email',
+            Value: UserEmail,
         },
         {
             $Type: 'UI.DataField',
             Label: 'Location',
             Value: Location,
+        },
+        {
+            $Type: 'UI.DataField',
+            Label: 'Panel Amount',
+            Value: PanelAmount,
         },
         {
             $Type: 'UI.DataField',
@@ -144,28 +152,28 @@ annotate service.SolarPanelConfigurations with @(
 
 annotate service.SolarPanelConfigurations with {
     User @Common.ValueList: {
-        $Type: 'Common.ValueListType',
+        $Type         : 'Common.ValueListType',
         CollectionPath: 'Users',
-        Parameters: [
+        Parameters    : [
             {
-                $Type: 'Common.ValueListParameterInOut',
+                $Type            : 'Common.ValueListParameterInOut',
                 LocalDataProperty: User_ID,
                 ValueListProperty: 'ID',
             },
             {
-                $Type: 'Common.ValueListParameterDisplayOnly',
+                $Type            : 'Common.ValueListParameterDisplayOnly',
                 ValueListProperty: 'Email',
             },
             {
-                $Type: 'Common.ValueListParameterDisplayOnly',
+                $Type            : 'Common.ValueListParameterDisplayOnly',
                 ValueListProperty: 'Firstname',
             },
             {
-                $Type: 'Common.ValueListParameterDisplayOnly',
+                $Type            : 'Common.ValueListParameterDisplayOnly',
                 ValueListProperty: 'Lastname',
             },
             {
-                $Type: 'Common.ValueListParameterDisplayOnly',
+                $Type            : 'Common.ValueListParameterDisplayOnly',
                 ValueListProperty: 'ContractType',
             },
         ],
