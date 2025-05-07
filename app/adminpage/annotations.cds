@@ -119,11 +119,6 @@ annotate service.SolarPanelConfigurations with @(
     UI.LineItem                  : [
         {
             $Type: 'UI.DataField',
-            Label: 'User ID',
-            Value: User_ID,
-        },
-        {
-            $Type: 'UI.DataField',
             Label: 'User Email',
             Value: UserEmail,
         },
@@ -158,23 +153,23 @@ annotate service.SolarPanelConfigurations with {
             {
                 $Type            : 'Common.ValueListParameterInOut',
                 LocalDataProperty: User_ID,
-                ValueListProperty: 'ID',
+                ValueListProperty: 'ID'
             },
             {
                 $Type            : 'Common.ValueListParameterDisplayOnly',
-                ValueListProperty: 'Email',
+                ValueListProperty: 'Email'
             },
             {
                 $Type            : 'Common.ValueListParameterDisplayOnly',
-                ValueListProperty: 'Firstname',
+                ValueListProperty: 'Firstname'
             },
             {
                 $Type            : 'Common.ValueListParameterDisplayOnly',
-                ValueListProperty: 'Lastname',
+                ValueListProperty: 'Lastname'
             },
             {
                 $Type            : 'Common.ValueListParameterDisplayOnly',
-                ValueListProperty: 'ContractType',
+                ValueListProperty: 'ContractType'
             },
         ],
     }

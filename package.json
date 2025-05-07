@@ -24,17 +24,22 @@
   "scripts": {
     "start": "cds-serve",
     "watch-userform": "cds watch --open userform/webapp/index.html?sap-ui-xx-viewCache=false",
-    "watch-adminpage": "cds watch --open adminpage/webapp/index.html?sap-ui-xx-viewCache=false"
+    "watch-adminpage": "cds watch --open adminpage/webapp/index.html?sap-ui-xx-viewCache=false",
+    "watch-usage": "cds watch --open usage/webapp/index.html?sap-ui-xx-viewCache=false"
   },
   "cds": {
     "requires": {
       "auth": "xsuaa"
+    },
+    "uaa": {
+      "kind": "xsuaa"
     },
     "sql": {
       "native_hana_associations": false
     }
   },
   "sapux": [
-    "app/"
+    "app/",
+    "app/usage"
   ]
 }

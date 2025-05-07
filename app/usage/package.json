@@ -1,5 +1,5 @@
 {
-  "name": "adminpage",
+  "name": "usage",
   "version": "0.0.1",
   "description": "An SAP Fiori application.",
   "keywords": [
@@ -15,13 +15,5 @@
   },
   "scripts": {
     "deploy-config": "npx -p @sap/ux-ui5-tooling fiori add deploy-config cf"
-  },
-  "cds": {
-    "log": {
-      "levels": {
-        "sql": "debug",
-        "cds": "info"
-      }
-    }
   }
 }
