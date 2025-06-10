@@ -1,6 +1,9 @@
 using com.ss.energysystem as db from '../db/schema';
 
-service UserFormService @(path: '/userform') {
+service UserFormService @(
+    path: '/userform',
+    requires: 'authenticated-user'
+) {
     @readonly
     entity CurrentUser {
         key email        : String;

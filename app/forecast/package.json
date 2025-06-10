@@ -1,5 +1,5 @@
 {
-  "name": "usage",
+  "name": "forecast",
   "version": "0.0.1",
   "description": "An SAP Fiori application.",
   "keywords": [
@@ -11,7 +11,8 @@
   "dependencies": {},
   "devDependencies": {
     "@ui5/cli": "^3.0.0",
-    "@sap/ux-ui5-tooling": "1"
+    "@sap/ux-ui5-tooling": "1",
+    "ui5-task-zipper": "^3.4.x"
   },
   "scripts": {
     "deploy-config": "npx -p @sap/ux-ui5-tooling fiori add deploy-config cf",

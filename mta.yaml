@@ -65,9 +65,23 @@ modules:
       - userform.zip
       name: userform
       target-path: resources/
+    - artifacts:
+      - forecast.zip
+      name: forecast
+      target-path: resources/
 - name: userform
   type: html5
   path: app/userform
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: forecast
+  type: html5
+  path: app/forecast
   build-parameters:
     build-result: dist
     builder: custom
@@ -109,11 +123,20 @@ resources:
             ProxyType: Internet
             Type: HTTP
             URL: https://ui5.sap.com
+          - Authentication: NoAuthentication
+            HTML5.DynamicDestination: true
+            HTML5.ForwardAuthToken: true
+            Name: EnergyManagementSystem-srv-api
+            ProxyType: Internet
+            Type: HTTP
+            URL: ~{srv-api/srv-url}
           existing_destinations_policy: update
       version: 1.0.0
     service: destination
     service-name: EnergyManagementSystem-destination-service
     service-plan: lite
+  requires:
+  - name: srv-api
 parameters:
   deploy_mode: html5-repo
   enable-parallel-deployments: true

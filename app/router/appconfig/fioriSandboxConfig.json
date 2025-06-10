@@ -1,0 +1,339 @@
+{
+    "services": {
+      "LaunchPage": {
+        "adapter": {
+          "config": {
+            "catalogs": [],
+            "groups": [
+              {
+                "id": "home",
+                "title": "Home",
+                "isPreset": true,
+                "isVisible": true,
+                "isGroupLocked": false,
+                "tiles": []
+              },
+              {
+                "id": "idUserApps",
+                "title": "User Applications",
+                "isPreset": true,
+                "isVisible": true,
+                "isGroupLocked": false,
+                "tiles": [
+                  {
+                    "id": "idAppUserForm",
+                    "tileType": "sap.ushell.ui.tile.StaticTile",
+                    "properties": {
+                      "title": "User Form",
+                      "subtitle": "Manage user profiles and settings",
+                      "icon": "sap-icon://person-placeholder",
+                      "targetURL": "#userform-display"
+                    }
+                  },
+                  {
+                    "id": "idAppUsage",
+                    "tileType": "sap.ushell.ui.tile.StaticTile",
+                    "properties": {
+                      "title": "Usage Analytics",
+                      "subtitle": "View usage statistics and reports",
+                      "icon": "sap-icon://bar-chart",
+                      "targetURL": "#usage-display"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "idAdministration",
+                "title": "Administration",
+                "isPreset": true,
+                "isVisible": true,
+                "isGroupLocked": false,
+                "tiles": [
+                  {
+                    "id": "idAppAdminPage",
+                    "tileType": "sap.ushell.ui.tile.StaticTile",
+                    "properties": {
+                      "title": "Admin Dashboard",
+                      "subtitle": "System administration and configuration",
+                      "icon": "sap-icon://settings",
+                      "targetURL": "#adminpage-manage"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "NavTargetResolution": {
+        "config": {
+          "enableClientSideTargetResolution": true
+        }
+      },
+      "ClientSideTargetResolution": {
+        "adapter": {
+          "config": {
+            "inbounds": {
+              "UserForm": {
+                "semanticObject": "userform",
+                "action": "display",
+                "title": "User Form",
+                "icon": "sap-icon://person-placeholder",
+                "signature": {
+                  "parameters": {
+                    "userId": {
+                      "required": false,
+                      "defaultValue": {
+                        "value": "",
+                        "format": "plain"
+                      }
+                    }
+                  },
+                  "additionalParameters": "ignored"
+                },
+                "resolutionResult": {
+                  "applicationType": "SAPUI5",
+                  "additionalInformation": "SAPUI5.Component=userform",
+                  "url": "userform/webapp"
+                }
+              },
+              "Usage": {
+                "semanticObject": "usage",
+                "action": "display",
+                "title": "Usage Analytics",
+                "icon": "sap-icon://bar-chart",
+                "signature": {
+                  "parameters": {
+                    "dateRange": {
+                      "required": false,
+                      "defaultValue": {
+                        "value": "30",
+                        "format": "plain"
+                      }
+                    }
+                  },
+                  "additionalParameters": "ignored"
+                },
+                "resolutionResult": {
+                  "applicationType": "SAPUI5",
+                  "additionalInformation": "SAPUI5.Component=usage",
+                  "url": "usage/webapp"
+                }
+              },
+              "AdminPage": {
+                "semanticObject": "adminpage",
+                "action": "manage",
+                "title": "Admin Dashboard",
+                "icon": "sap-icon://settings",
+                "signature": {
+                  "parameters": {
+                    "section": {
+                      "required": false,
+                      "defaultValue": {
+                        "value": "overview",
+                        "format": "plain"
+                      }
+                    }
+                  },
+                  "additionalParameters": "ignored"
+                },
+                "resolutionResult": {
+                  "applicationType": "SAPUI5",
+                  "additionalInformation": "SAPUI5.Component=adminpage",
+                  "url": "adminpage/webapp"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "defaultRenderer": "fiori2",
+    "bootstrapPlugins": {
+      "RuntimeAuthoringPlugin": {
+        "component": "sap.ushell.plugins.rta",
+        "config": {
+          "validateAppVersion": false
+        }
+      },
+      "PersonalizePlugin": {
+        "component": "sap.ushell.plugins.rta-personalize",
+        "config": {
+          "validateAppVersion": false
+        }
+      }
+    },
+    "services": {
+      "SupportTicket": {
+        "factoryName": "sap.ushell.demo.SupportTicketService"
+      },
+      "EndUserFeedback": {
+        "config": {
+          "enabled": true
+        }
+      },
+      "UsageAnalytics": {
+        "config": {
+          "enabled": true,
+          "setUsageAnalyticsPermitted": true
+        }
+      }
+    },
+    "applications": {
+      "userform-display": {
+        "additionalInformation": "SAPUI5.Component=userform",
+        "applicationType": "URL",
+        "url": "userform/webapp",
+        "description": "User Form Application for managing user profiles"
+      },
+      "usage-display": {
+        "additionalInformation": "SAPUI5.Component=usage",
+        "applicationType": "URL", 
+        "url": "usage/webapp",
+        "description": "Usage Analytics Application for viewing system usage"
+      },
+      "adminpage-manage": {
+        "additionalInformation": "SAPUI5.Component=adminpage",
+        "applicationType": "URL",
+        "url": "adminpage/webapp", 
+        "description": "Admin Dashboard for system administration"
+      }
+    },
+    "services": {
+      "LaunchPage": {
+        "adapter": {
+          "config": {
+            "catalogs": [],
+            "groups": [
+              {
+                "id": "home",
+                "title": "Home",
+                "isPreset": true,
+                "isVisible": true,
+                "isGroupLocked": false,
+                "tiles": []
+              },
+              {
+                "id": "idUserApps", 
+                "title": "User Applications",
+                "isPreset": true,
+                "isVisible": true,
+                "isGroupLocked": false,
+                "tiles": [
+                  {
+                    "id": "idAppUserForm",
+                    "tileType": "sap.ushell.ui.tile.StaticTile",
+                    "properties": {
+                      "title": "User Form",
+                      "subtitle": "Manage user profiles",
+                      "icon": "sap-icon://person-placeholder",
+                      "targetURL": "#userform-display"
+                    }
+                  },
+                  {
+                    "id": "idAppUsage",
+                    "tileType": "sap.ushell.ui.tile.StaticTile", 
+                    "properties": {
+                      "title": "Usage Analytics",
+                      "subtitle": "View usage reports",
+                      "icon": "sap-icon://bar-chart",
+                      "targetURL": "#usage-display"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "idAdministration",
+                "title": "Administration", 
+                "isPreset": true,
+                "isVisible": true,
+                "isGroupLocked": false,
+                "tiles": [
+                  {
+                    "id": "idAppAdminPage",
+                    "tileType": "sap.ushell.ui.tile.StaticTile",
+                    "properties": {
+                      "title": "Admin Dashboard",
+                      "subtitle": "System administration",
+                      "icon": "sap-icon://settings",
+                      "targetURL": "#adminpage-manage"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "NavTargetResolution": {
+        "config": {
+          "enableClientSideTargetResolution": true
+        }
+      },
+      "ClientSideTargetResolution": {
+        "adapter": {
+          "config": {
+            "inbounds": {
+              "UserForm": {
+                "semanticObject": "userform",
+                "action": "display", 
+                "title": "User Form",
+                "icon": "sap-icon://person-placeholder",
+                "signature": {
+                  "parameters": {
+                    "userId": {
+                      "required": false
+                    }
+                  },
+                  "additionalParameters": "ignored"
+                },
+                "resolutionResult": {
+                  "applicationType": "SAPUI5",
+                  "additionalInformation": "SAPUI5.Component=userform",
+                  "url": "userform/webapp"
+                }
+              },
+              "Usage": {
+                "semanticObject": "usage",
+                "action": "display",
+                "title": "Usage Analytics", 
+                "icon": "sap-icon://bar-chart",
+                "signature": {
+                  "parameters": {
+                    "dateRange": {
+                      "required": false
+                    }
+                  },
+                  "additionalParameters": "ignored"
+                },
+                "resolutionResult": {
+                  "applicationType": "SAPUI5",
+                  "additionalInformation": "SAPUI5.Component=usage", 
+                  "url": "usage/webapp"
+                }
+              },
+              "AdminPage": {
+                "semanticObject": "adminpage",
+                "action": "manage",
+                "title": "Admin Dashboard",
+                "icon": "sap-icon://settings",
+                "signature": {
+                  "parameters": {
+                    "section": {
+                      "required": false
+                    }
+                  },
+                  "additionalParameters": "ignored"
+                },
+                "resolutionResult": {
+                  "applicationType": "SAPUI5",
+                  "additionalInformation": "SAPUI5.Component=adminpage",
+                  "url": "adminpage/webapp"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }

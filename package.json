@@ -12,20 +12,29 @@
     "@sap/cds-odata-v2-adapter-proxy": "^1.9.7",
     "@sap/hdi-deploy": "^5.4.2",
     "@sap/xssec": "^4",
+    "axios": "^1.9.0",
     "express": "^4",
     "hdb": "^0.19.12",
-    "uuid": "^11.1.0"
+    "node-cron": "^4.1.0",
+    "uuid": "^11.1.0",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@cap-js/cds-types": "^0.9.0",
     "@cap-js/sqlite": "^1",
-    "@sap/cds-dk": "^8"
+    "@sap/cds-dk": "^8",
+    "mbt": "^1.2.29",
+    "rimraf": "^5.0.5"
   },
   "scripts": {
     "start": "cds-serve",
     "watch-userform": "cds watch --open userform/webapp/index.html?sap-ui-xx-viewCache=false",
     "watch-adminpage": "cds watch --open adminpage/webapp/index.html?sap-ui-xx-viewCache=false",
-    "watch-usage": "cds watch --open usage/webapp/index.html?sap-ui-xx-viewCache=false"
+    "watch-usage": "cds watch --open usage/webapp/index.html?sap-ui-xx-viewCache=false",
+    "undeploy": "cf undeploy EnergyManagementSystem --delete-services --delete-service-keys --delete-service-brokers",
+    "build": "rimraf resources mta_archives && mbt build --mtar archive",
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1",
+    "watch-forecast": "cds watch --open forecast/webapp/index.html?sap-ui-xx-viewCache=false"
   },
   "cds": {
     "requires": {
@@ -40,6 +49,7 @@
   },
   "sapux": [
     "app/",
-    "app/usage"
+    "app/usage",
+    "app/forecast"
   ]
 }

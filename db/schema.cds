@@ -7,36 +7,42 @@ using {
 } from '@sap/cds/common';
 
 entity Users : cuid, managed {
-        Email          : String(100) @assert.format: 'email';
-        Firstname      : String(100);
-        Lastname       : String(100);
-        ContractType   : String enum {
-            fixed;
-            variable;
-        };
+    Email          : String(100) @assert.format: 'email';
+    Firstname      : String(100);
+    Lastname       : String(100);
+    ContractType   : String enum {
+        fixed;
+        variable;
+    };
 
-        // Associations
-        Configurations : Association to many SolarPanelConfigurations
-                             on Configurations.ID = ID;
+    // Associations
+    Configurations : Association to many SolarPanelConfigurations
+                         on Configurations.User = $self;
 
-        EnergyUsages   : Association to many EnergyUsages
-                             on EnergyUsages.User = $self;
-        EnergyRates    : Association to many EnergyRates
-                             on EnergyRates.User = $self;
-        Calculations   : Association to many Calculations
-                             on Calculations.User = $self;
+    EnergyUsages   : Association to many EnergyUsages
+                         on EnergyUsages.User = $self;
+    EnergyRates    : Association to many EnergyRates
+                         on EnergyRates.User = $self;
+    Calculations   : Association to many Calculations
+                         on Calculations.User = $self;
+    WeatherForecasts : Association to many WeatherForecast
+                         on WeatherForecasts.User = $self;
 }
 
 entity EnergyRates : cuid {
-    Date  : Date;
-    Time  : Time;
-    Price : Decimal(6, 4);
-    User  : Association to Users;
+    DateTime : Timestamp;
+    Price    : Decimal(8, 4);
+    User     : Association to Users;
+}
+
+entity WeatherForecast : cuid {
+    DateTime : Timestamp;
+    Watts    : Integer;
+    User     : Association to Users;
 }
 
 entity Calculations : cuid {
-    Date             : Date;
-    Time             : Time;
+    DateTime         : Timestamp;
     PredictedUsage   : Integer;
     PredictedSavings : Decimal(5, 2);
     Conclusion       : Integer;
@@ -58,13 +64,11 @@ entity SolarPanelConfigurations : cuid {
         360
     ];
     ModulePower  : Integer not null; // Watts
-    Latitude     : Decimal(9, 6); // Add this field
-    Longitude    : Decimal(9, 6); // Add this field
-    // This explicitly defines the relationship and the foreign key
+    Latitude     : Decimal(9, 6);
+    Longitude    : Decimal(9, 6);
     User         : Association to Users;
-
     Supplies     : Association to many SolarSupplies
-                       on Supplies.ID = ID;
+                       on Supplies.Configuration = $self;
 }
 
 entity EnergyUsages : cuid {
