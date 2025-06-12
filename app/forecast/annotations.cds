@@ -1,5 +1,17 @@
 using ForecastService as service from '../../srv/forecast-service';
 
+// Voeg deze annotatie toe om timezone conversie uit te schakelen
+annotate service.Forecasts:DateTime with @(
+    odata.type: 'Edm.String',
+    Common.Label: 'Datum & Tijd (UTC)',
+    UI.DisplayFormat: 'NonComputedDate'
+);
+
+// Of probeer deze annotatie voor de hele service
+annotate ForecastService with @(
+    sap.timezone: 'UTC'
+);
+
 annotate service.Forecasts with @(
     UI.LineItem : [
         {
@@ -17,7 +29,7 @@ annotate service.Forecasts with @(
         {
             $Type : 'UI.DataField',
             Label : 'Energieprijs (€/MWh)',
-            Value : EnergyPrice,  // CHANGED: was Price, now EnergyPrice
+            Value : EnergyPrice,
             ![@UI.Importance] : #High,
         },
         {
@@ -25,10 +37,9 @@ annotate service.Forecasts with @(
             Action : 'ForecastService.refreshForecastData',
             Label : 'Ververs Mijn Data',
             ![@UI.Importance] : #High,
-            InvocationGrouping : #ChangeSet,
         },
     ],
-    
+
     UI.HeaderInfo : {
         TypeName : 'Energie Voorspelling',
         TypeNamePlural : 'Energie Voorspellingen',
@@ -37,11 +48,11 @@ annotate service.Forecasts with @(
             Value : DateTime,
         }
     },
-    
+
     UI.SelectionFields : [
         DateTime
     ],
-    
+
     UI.PresentationVariant : {
         Text : 'Default',
         SortOrder : [{
@@ -50,7 +61,7 @@ annotate service.Forecasts with @(
         }],
         Visualizations : ['@UI.LineItem']
     },
-    
+
     UI.Chart : {
         Title : 'Solar Output vs Energy Prices',
         ChartType : #Line,
@@ -73,20 +84,20 @@ annotate service.Forecasts with @(
             }
         ]
     },
-    
+
     UI.DataPoint #Watts : {
         Value : Watts,
         Title : 'Solar Output (W)',
         TargetValue : 1000,
         Visualization : #Number
     },
-    
+
     UI.DataPoint #EnergyPrice : {
         Value : EnergyPrice,
         Title : 'Energy Price (€/MWh)',
         Visualization : #Number
     },
-    
+
     UI.FieldGroup #GeneralInfo : {
         $Type : 'UI.FieldGroupType',
         Data : [
@@ -107,7 +118,7 @@ annotate service.Forecasts with @(
             }
         ],
     },
-    
+
     UI.Facets : [
         {
             $Type : 'UI.ReferenceFacet',
@@ -123,19 +134,36 @@ annotate service.Forecasts with @(
     ]
 );
 
-// Aparte annotaties voor velden
+// Separate field annotations with proper CDS syntax
 annotate service.Forecasts with {
     @title : 'Datum & Tijd'
     @readonly
+    @Common.FieldControl : #ReadOnly
+    @Common.Label : 'Datum & Tijd'
+    @UI.HiddenFilter : false
     DateTime;
-    
+
     @title : 'Solar Vermogen (W)'
     @Measures.Unit : 'W'
     @readonly
+    @Common.FieldControl : #ReadOnly
+    @Common.Label : 'Solar Vermogen'
     Watts;
-    
+
     @title : 'Energieprijs (€/MWh)'
     @Measures.Unit : '€/MWh'
     @readonly
-    EnergyPrice;  // CHANGED: was EnergyRates, now EnergyPrice
+    @Common.FieldControl : #ReadOnly
+    @Common.Label : 'Energieprijs'
+    EnergyPrice;
 };
+
+// Additional timezone-specific annotations for DateTime field
+annotate service.Forecasts.DateTime with @(
+    Common.ValueFormat : {
+        $Type : 'Common.ValueFormatType',
+        ScaleFactor : 1,
+        NumberOfFractionalDigits : 0
+    },
+    UI.IsImageURL : false
+);
